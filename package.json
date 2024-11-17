@@ -1,0 +1,16 @@
+{
+  "name": "cap-frontend",
+  "private": true,
+  "workspaces": [
+    "core",
+    "customers/*"
+  ],
+  "scripts": {
+    "create-customer": "node scripts/create-customer.js",
+    "dev:convertai": "yarn workspace @cap-frontend/convertai dev",
+    "build:convertai": "yarn workspace @cap-frontend/convertai build",
+    "dev": "yarn workspace @cap-frontend/core dev",
+    "build": "yarn workspace @cap-frontend/core build",
+    "test": "yarn workspaces run test"
+  }
+}
