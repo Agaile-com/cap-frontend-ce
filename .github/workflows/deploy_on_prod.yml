@@ -1,0 +1,97 @@
+name: Build and Publish on PROD
+
+on:
+  workflow_dispatch:
+    inputs:
+      tenant:
+        description: 'Tenant to deploy'
+        required: true
+        type: choice
+        options:
+          - agaile
+          - zohlar
+      tag:
+        description: 'The container tag to use for deployment'
+        required: true
+        default: 'latest'
+      dockerfile:
+        description: 'Path to Dockerfile'
+        required: true
+        default: 'Dockerfile'
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    environment: PROD
+    steps:
+      # Checkout the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref || github.ref }}
+
+      # Set up Python environment
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # Poetry setup
+      - name: Install Poetry
+        uses: abatilo/actions-poetry@v2
+
+      # Authenticate to AWS and ECR
+      - name: Authenticate to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v1
+        env:
+          AWS_REGION: eu-central-1
+          LANGGRAPH_API_URL: ${{ secrets.LANGGRAPH_API_URL }}
+          LANGCHAIN_API_KEY: ${{ secrets.LANGCHAIN_API_KEY }}
+          NEXT_PUBLIC_LANGGRAPH_ASSISTANT_ID: ${{ secrets.NEXT_PUBLIC_LANGGRAPH_ASSISTANT_ID }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_PROD }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_PROD }}
+
+      - name: Set Tenant Variables
+        id: tenant-vars
+        run: |
+          TENANT=${{ github.event.inputs.tenant }}
+          TENANT_CONFIG=$(jq -r --arg ENV "prod" --arg TENANT "$TENANT" '.[$ENV].tenants[$TENANT]' tenants.json)
+          echo "PROJECT_NAME=$(echo $TENANT_CONFIG | jq -r '.project_name')" >> $GITHUB_OUTPUT
+          echo "ASSISTANT_ID=$(echo $TENANT_CONFIG | jq -r '.assistant_id')" >> $GITHUB_OUTPUT
+
+      - name: Build and Push Docker Image
+        run: |
+          echo "Building and pushing Docker image for tenant ${{ github.event.inputs.tenant }}..."
+          
+          # Define variables
+          IMAGE_NAME=cap-frontend
+          TENANT_NAME=${{ steps.tenant-vars.outputs.PROJECT_NAME }}
+          TAG=${{ github.event.inputs.tag }}
+          DOCKERFILE_PATH=${{ github.event.inputs.dockerfile || 'Dockerfile' }}
+          ECR_REGISTRY=585008045756.dkr.ecr.eu-central-1.amazonaws.com
+          
+          # Combine tenant name and tag if tag is not 'latest'
+          if [ "$TAG" != "latest" ]; then
+            FINAL_TAG="${TENANT_NAME}-${TAG}"
+          else
+            FINAL_TAG="${TENANT_NAME}"
+          fi
+          
+          # Build the Docker image
+          docker build \
+            --platform linux/arm64 \
+            --build-arg LANGCHAIN_API_KEY="${LANGCHAIN_API_KEY}" \
+            --build-arg LANGGRAPH_API_URL="${LANGGRAPH_API_URL}" \
+            --build-arg NEXT_PUBLIC_LANGGRAPH_ASSISTANT_ID="${{ steps.tenant-vars.outputs.ASSISTANT_ID }}" \
+            --build-arg NODE_ENV=production \
+            -t $IMAGE_NAME:$FINAL_TAG -f $DOCKERFILE_PATH .
+          
+          # Tag and push
+          docker tag $IMAGE_NAME:$FINAL_TAG $ECR_REGISTRY/$IMAGE_NAME:$FINAL_TAG
+          docker push $ECR_REGISTRY/$IMAGE_NAME:$FINAL_TAG
+        env:
+          AWS_REGION: eu-central-1
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_PROD }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_PROD }}
+          LANGCHAIN_API_KEY: ${{ secrets.LANGCHAIN_API_KEY }}
+          LANGGRAPH_API_URL: ${{ secrets.LANGGRAPH_API_URL }}

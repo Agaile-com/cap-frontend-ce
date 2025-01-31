@@ -1,0 +1,38 @@
+{
+  "dev": {
+    "tenants": {
+      "agaile": {
+        "project_name": "agaile",
+        "assistant_id": "d8a7f747-77ce-4b59-b3ff-754b46155d79"
+      },
+      "zohlar": {
+        "project_name": "zohlar",
+        "assistant_id": "fefda989-9c0e-4ddd-94d8-d1b5540b17bc"
+      },
+      "rooftopsolar": {
+        "project_name": "rooftopsolar",
+        "assistant_id": "6ada6340-487f-4e34-908a-bb97892b1aaf"
+      }
+    },
+    "shared": {
+      "api_url": "PLACEHOLDER_DEV_API_URL",
+      "api_key": "PLACEHOLDER_DEV_API_KEY"
+    }
+  },
+  "prod": {
+    "tenants": {
+      "agaile": {
+        "project_name": "agaile",
+        "assistant_id": "prod-agaile-assistant-id"
+      },
+      "zohlar": {
+        "project_name": "zohlar",
+        "assistant_id": "prod-zohlar-assistant-id"
+      }
+    },
+    "shared": {
+      "api_url": "PLACEHOLDER_PROD_API_URL",
+      "api_key": "PLACEHOLDER_PROD_API_KEY"
+    }
+  }
+} 

@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# rooftopsolar
+# ./build_image \
+#     rooftopsolar \
+#     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 \
+#     https://cap-engine-2-3fac86f29ec85ca7bcc8f78602eb0771.us.langgraph.app \
+#     91ec108b-35ab-483d-9020-0476a26c1ca9
+
+# zohlar
+#./build_image \
+#    zohlar \
+#    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 \
+#    https://cap-engine-2-3fac86f29ec85ca7bcc8f78602eb0771.us.langgraph.app \
+#    baa82304-5c27-4896-8110-33bb9c4bc806
+
+ agaile
+ ./build_image \
+     agaile \
+     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 \
+     https://cap-engine-2-3fac86f29ec85ca7bcc8f78602eb0771.us.langgraph.app \
+     0cc50a61-6088-42b2-8190-d4b4483a3dd2 \
+     --platform linux/arm64 \
+     --log-driver=awslogs \
+     --log-opt awslogs-group=/ecs/rooftopsolar \
+     --log-opt awslogs-region=eu-central-1 \
+     --log-opt awslogs-stream-prefix=ecs

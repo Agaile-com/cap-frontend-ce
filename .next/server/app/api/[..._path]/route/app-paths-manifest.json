@@ -1,0 +1,3 @@
+{
+  "/api/[..._path]/route": "app-edge-has-no-entrypoint"
+}

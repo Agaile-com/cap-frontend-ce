@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  cap-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_LANGGRAPH_ASSISTANT_ID=${NEXT_PUBLIC_LANGGRAPH_ASSISTANT_ID}
+    image: cap-frontend:latest
+    container_name: cap-frontend-container
+    volumes:
+      - ./app:/app/app
+      - ./components:/app/components
+      - ./lib:/app/lib
+    env_file:
+      - .env.local
+    ports:
+      - "3000:3000"
+    # command: ["npm", "run", "dev:modal"] # For development, adjust as needed
+    restart: unless-stopped

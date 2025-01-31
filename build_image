@@ -1,0 +1,57 @@
+#!/bin/bash
+
+# Usage Guidelines
+# This script builds, tags, and pushes a ${CONTAINER} image for a specified project.
+# Usage:
+#   ./build_image <PROJECT_NAME>
+# Example:
+# Don't worry the details are fake
+# ./build_image \
+#   agaile \
+#   lsv2_sk_34fwff49br3245134552efb9e_c974w54t9 \
+#   https://cap-engine-2-4r39f8uy98wjf984uf9e.us.langgraph.app \
+#   45465g8b-47bc-78df-3956-2645s5371cb8
+# Ensure the following:
+#   1. AWS CLI is configured with the appropriate profile and region.
+#   2. ${CONTAINER} is installed and configured.
+#   3. LANGCHAIN_API_KEY, LANGGRAPH_API_URL, and NEXT_PUBLIC_LANGGRAPH_ASSISTANT_ID are set correctly.
+#   4. Replace 'build' with the actual filename of this script.
+
+# Parameters
+
+CONTAINER="podman"
+
+# REMOVE ANY EXISTING IMAGES
+${CONTAINER} rmi --all
+
+# AWS account details
+AWS_ACCOUNT_ID=585008045756
+AWS_PROFILE=585008045756_AdministratorAccess
+AWS_REGION=eu-central-1
+
+# Project details
+PROJECT_NAME=$1
+LANGCHAIN_API_KEY=$2
+LANGGRAPH_API_URL=$3
+NEXT_PUBLIC_LANGGRAPH_ASSISTANT_ID=$4
+
+if [ -z "$PROJECT_NAME" ]; then
+  echo "Error: PROJECT_NAME parameter is missing."
+  echo "Usage: ./build_image <PROJECT_NAME>"
+  exit 1
+fi
+
+# NEXT_PUBLIC_LANGGRAPH_ASSISTANT_ID=${NEXT_PUBLIC_LANGGRAPH_ASSISTANT_ID} ${CONTAINER}-compose up --build
+
+# Login to ECR
+aws ecr get-login-password --profile ${AWS_PROFILE} --region ${AWS_REGION} | ${CONTAINER} login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
+
+# Build, Tag, and Push ${CONTAINER} Image
+${CONTAINER} build \
+    --build-arg LANGCHAIN_API_KEY=${LANGCHAIN_API_KEY} \
+    --build-arg LANGGRAPH_API_URL=${LANGGRAPH_API_URL} \
+    --build-arg NEXT_PUBLIC_LANGGRAPH_ASSISTANT_ID=${NEXT_PUBLIC_LANGGRAPH_ASSISTANT_ID} \
+    -t ${PROJECT_NAME}-frontend .
+
+${CONTAINER} tag ${PROJECT_NAME}-frontend:latest ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${PROJECT_NAME}-frontend:latest
+${CONTAINER} push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${PROJECT_NAME}-frontend:latest
