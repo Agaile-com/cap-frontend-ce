@@ -3,15 +3,7 @@
     "tenants": {
       "agaile": {
         "project_name": "agaile",
-        "assistant_id": "d8a7f747-77ce-4b59-b3ff-754b46155d79"
-      },
-      "zohlar": {
-        "project_name": "zohlar",
-        "assistant_id": "fefda989-9c0e-4ddd-94d8-d1b5540b17bc"
-      },
-      "rooftopsolar": {
-        "project_name": "rooftopsolar",
-        "assistant_id": "6ada6340-487f-4e34-908a-bb97892b1aaf"
+        "assistant_id": "prod-agaile-assistant-id"
       }
     },
     "shared": {

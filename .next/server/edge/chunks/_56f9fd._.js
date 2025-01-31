@@ -21692,7 +21692,7 @@ var _self___RSC_MANIFEST;
 ;
 ;
 const nextConfig = {
-    "configFile": "/Users/ivo/Development/cap-frontend-v2/next.config.ts",
+    "configFile": "/Users/ivo/Development/cap-frontend-community/next.config.ts",
     "configFileName": "next.config.ts",
     "cacheMaxMemorySize": 52428800.0,
     "cacheHandler": null,
