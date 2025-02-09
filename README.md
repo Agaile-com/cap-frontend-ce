@@ -14,11 +14,11 @@ The application uses tenant-specific configuration stored in `tenants.json`:
     "tenants": {
       "agaile": {
         "project_name": "agaile",
-        "assistant_id": "d8a7f747-77ce-4b59-b3ff-754b46155d79"
+        "assistant_id": "d8a7f747-....46155d79"
       },
       "zohlar": {
         "project_name": "zohlar",
-        "assistant_id": "fefda989-9c0e-4ddd-94d8-d1b5540b17bc"
+        "assistant_id": "fefda9...d1b5540b17bc"
       },
       "new-tenant": {
         "project_name": "new-tenant",
