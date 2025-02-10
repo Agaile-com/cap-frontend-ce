@@ -1,4 +1,9 @@
-# CAP Frontend
+# CAP - Empowering Enterprise AI Transformation with Open Source
+This repository is part of CAP - a platform for building and deploying AI applications. It is built with LangGraph and Model Context Protocol (MCP).
+Find more about CAP at [https://cap.agaile.ai](https://cap.agaile.ai).
+
+
+## CAP Frontend
 
 This is the user interface for CAP based on [assistant-ui](https://github.com/Yonom/assistant-ui) and a starter project for langgraph.
 
